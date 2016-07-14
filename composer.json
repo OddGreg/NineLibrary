@@ -26,8 +26,9 @@
     "require"          : {
     },
     "require-dev"      : {
-        "phpunit/phpunit": "^5.1@dev",
-        "psy/psysh"      : "@stable",
-        "tracy/tracy"    : "^2.4@dev"
+        "phpunit/phpunit"              : "^5.1@dev",
+        "psy/psysh"                    : "@stable",
+        "tracy/tracy"                  : "^2.4@dev",
+        "codeclimate/php-test-reporter": "dev-master"
     }
 }
