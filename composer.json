@@ -1,0 +1,33 @@
+{
+    "name"             : "oddgreg/nine-library",
+    "description"      : "A library of standard utility classes and functions.",
+    "type"             : "library",
+    "license"          : "MIT",
+    "authors"          : [
+        {
+            "name" : "Greg Truesdell",
+            "email": "odd.greg@gmail.com"
+        }
+    ],
+    "autoload"         : {
+        "classmap"             : [
+            "tests"
+        ],
+        "files"                : [
+            "src/helpers.php"
+        ],
+        "exclude-from-classmap": [
+        ],
+        "psr-4"                : {
+            "Nine\\Library\\": "src"
+        }
+    },
+    "minimum-stability": "dev",
+    "require"          : {
+    },
+    "require-dev"      : {
+        "phpunit/phpunit": "^5.1@dev",
+        "psy/psysh"      : "@stable",
+        "tracy/tracy"    : "^2.4@dev"
+    }
+}
