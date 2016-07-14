@@ -37,7 +37,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
         $this->lib = new Lib();
     }
 
-    public function test03_PartThree()
+    public function test_extract_column_to_make_compare()
     {
         ### array_extract_list($find_key, $array)
 
@@ -63,7 +63,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
         static::assertNull($this->lib->make_compare(['bad']));
     }
 
-    public function test04_PartFour()
+    public function test_assoc_from_string()
     {
         ### array_fill_object($obj, $array)
 
@@ -88,7 +88,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function test05_PartFive()
+    public function test_values()
     {
         ### generate_object_value_hash($object, $value)
 
@@ -155,7 +155,7 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function test06_PartSix()
+    public function test_array_get_and_search()
     {
         $searchRA = [
             'name'   => 'greg',

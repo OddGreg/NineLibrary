@@ -21,7 +21,7 @@ class StringHelpersTest extends \PHPUnit_Framework_TestCase
         $this->lib = new Lib;
     }
 
-    public function test01_PartOne()
+    public function test_str_has_to_alias_from_class()
     {
         ### contains($needles, $haystack)
 
@@ -44,7 +44,7 @@ class StringHelpersTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function test02_PartTwo()
+    public function test_starts_and_ends_with()
     {
         ### startsWith($needle, $haystack)
 
@@ -73,7 +73,7 @@ class StringHelpersTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function test03_PartThree()
+    public function test_changing_cases()
     {
         ### snakecase_to_heading($word, $space = ' ')
 
@@ -90,7 +90,7 @@ class StringHelpersTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function test04_PartFour()
+    public function test_transformations()
     {
         ### remove_quotes($string)
 
@@ -113,7 +113,7 @@ class StringHelpersTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function test05_PartFive()
+    public function test_parsing()
     {
         ### encode_readable_json($to_convert, $indent = 0)
 
@@ -145,7 +145,7 @@ class StringHelpersTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expect, $this->lib->parse_class_name('Symfony\Component\HttpFoundation\AcceptHeader'));
     }
 
-    public function test06_PartSix()
+    public function test_file_in_path_to_string_to_url()
     {
         ### file_in_path($name, Array $paths)
 
