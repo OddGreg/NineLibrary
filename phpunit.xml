@@ -26,7 +26,7 @@
         </whitelist>
     </filter>
     <logging>
-        <log type="coverage-html" target="./tests/coverage/" highlight="true" showUncoveredFiles="true">
+        <log type="coverage-html" target="./build/coverage/" highlight="true" showUncoveredFiles="true">
         </log>
     </logging>
     <php>
