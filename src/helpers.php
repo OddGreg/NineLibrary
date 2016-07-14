@@ -134,28 +134,7 @@ if ( ! function_exists('normalize_path')) {
     function normalize_path($path)
     {
         $path = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
-
-        $parts = array_filter(explode(DIRECTORY_SEPARATOR, $path), 'strlen');
-
-        $absolutes = [];
-        foreach ($parts as $part) {
-            if ('.' === $part) {
-                continue;
-            }
-            if ('..' === $part) {
-                array_pop($absolutes);
-            }
-            else {
-                $absolutes[] = $part;
-            }
-        }
-
-        $path = implode(DIRECTORY_SEPARATOR, $absolutes);
-
-        $path = Lib::starts_with('/', $path) ?: $path;
-        $path = Lib::ends_with('/', $path) ?: $path;
-
-        return $path;
+        return Lib::strip_tail('/', realpath($path)) . '/';
     }
 }
 
