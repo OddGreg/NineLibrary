@@ -24,6 +24,7 @@
             "Nine\\Library\\": "src"
         }
     },
+    "prefer-stable"    : true,
     "minimum-stability": "dev",
     "require"          : {
     },
