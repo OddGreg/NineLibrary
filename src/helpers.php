@@ -8,6 +8,7 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
+use Guzzle\Common\Collection;
 use Nine\Library\Lib;
 
 if (PHP_VERSION_ID < 70000) {
@@ -201,5 +202,53 @@ if ( ! function_exists('tuples')) {
         }
 
         return $result;
+    }
+}
+
+if ( ! function_exists('data_get')) {
+    /**
+     * Get an item from an array or object using "dot" notation.
+     *
+     * @param  mixed        $target
+     * @param  string|array $key
+     * @param  mixed        $default
+     *
+     * @return mixed
+     */
+    function data_get($target, $key, $default = NULL)
+    {
+        if (is_null($key)) {
+            return $target;
+        }
+
+        $key = is_array($key) ? $key : explode('.', $key);
+
+        while (($segment = array_shift($key)) !== NULL) {
+            if ($segment === '*') {
+                if ($target instanceof Collection) {
+                    $target = $target->all();
+                }
+                elseif ( ! is_array($target)) {
+                    return value($default);
+                }
+
+                $result = Lib::array_pluck($target, $key);
+
+                /** @noinspection TypeUnsafeArraySearchInspection */
+                return in_array('*', $key) ? Lib::array_collapse($result) : $result;
+            }
+
+            if (Lib::array_accessible($target) && Lib::array_exists($target, $segment)) {
+                $target = $target[$segment];
+            }
+            elseif (is_object($target) && isset($target->{$segment})) {
+                $target = $target->{$segment};
+            }
+            else {
+                return value($default);
+            }
+        }
+
+        return $target;
     }
 }

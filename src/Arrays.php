@@ -7,6 +7,7 @@
  */
 
 use ArrayAccess;
+use Guzzle\Common\Collection;
 
 /**
  * **Arrays is a compendium of array functions, supplied as static methods,
@@ -69,7 +70,13 @@ trait Arrays
         $results = [];
 
         foreach ($array as $values) {
-            /** @noinspection SlowArrayOperationsInLoopInspection */
+            if ($values instanceof Collection) {
+                $values = $values->all();
+            }
+            elseif ( ! is_array($values)) {
+                continue;
+            }
+
             $results = array_merge($results, $values);
         }
 
@@ -98,6 +105,23 @@ trait Arrays
     public static function array_except($array, $keys)
     {
         return array_diff_key($array, array_flip((array) $keys));
+    }
+
+    /**
+     * Determine if the given key exists in the provided array.
+     *
+     * @param  \ArrayAccess|array $array
+     * @param  string|int         $key
+     *
+     * @return bool
+     */
+    public static function array_exists($array, $key)
+    {
+        if ($array instanceof ArrayAccess) {
+            return $array->offsetExists($key);
+        }
+
+        return array_key_exists($key, $array);
     }
 
     /**
@@ -161,6 +185,31 @@ trait Arrays
     }
 
     /**
+     * Return the first element in an array passing a given truth test.
+     *
+     * @param  array         $array
+     * @param  callable|null $callback
+     * @param  mixed         $default
+     *
+     * @return mixed
+     */
+    public static function array_first($array, callable $callback = NULL, $default = NULL)
+    {
+        if (is_null($callback)) {
+            return empty($array) ? value($default) : reset($array);
+        }
+
+        foreach ($array as $key => $value) {
+            /** @noinspection VariableFunctionsUsageInspection */
+            if (call_user_func($callback, $key, $value)) {
+                return $value;
+            }
+        }
+
+        return value($default);
+    }
+
+    /**
      * **Return the first matching value element in an array passing a given truth test.**
      *
      * <pre>
@@ -215,26 +264,33 @@ trait Arrays
      *              '2.six'     => 6,
      *          ]</pre>
      *
-     * @param  array  $array
-     * @param  string $prepend
+     * @param  array $array
+     * @param        $depth
      *
      * @return array
      */
-    public static function array_flatten($array, $prepend = '')
+    public static function array_flatten($array, $depth = INF)
     {
-        $results = [];
+        $result = [];
 
-        foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                /** @noinspection SlowArrayOperationsInLoopInspection */
-                $results = array_merge($results, static::array_flatten($value, $prepend . $key . '.'));
+        foreach ($array as $item) {
+            $item = $item instanceof Collection ? $item->all() : $item;
+
+            if (is_array($item)) {
+                /** @noinspection PhpUndefinedVariableInspection */
+                if ($depth === 1) {
+                    $result = array_merge($result, $item);
+                    continue;
+                }
+
+                $result = array_merge($result, static::array_flatten($item, $depth - 1));
+                continue;
             }
-            else {
-                $results[$prepend . $key] = $value;
-            }
+
+            $result[] = $item;
         }
 
-        return $results;
+        return $result;
     }
 
     /**
@@ -430,9 +486,69 @@ trait Arrays
      *
      * @return mixed
      */
-    public static function array_last($array, callable $callback, $default = NULL)
+    public static function array_last($array, callable $callback = NULL, $default = NULL)
     {
+        if (is_null($callback)) {
+            return empty($array) ? value($default) : end($array);
+        }
+
         return static::array_first_match(array_reverse($array), $callback, $default);
+    }
+
+    /**
+     * Pluck an array of values from an array.
+     *
+     * @param  array             $array
+     * @param  string|array      $value
+     * @param  string|array|null $key
+     *
+     * @return array
+     */
+    public static function array_pluck($array, $value, $key = NULL)
+    {
+        $results = [];
+
+        list($value, $key) = static::explodePluckParameters($value, $key);
+
+        foreach ($array as $item) {
+            $itemValue = data_get($item, $value);
+
+            // If the key is "null", we will just append the value to the array and keep
+            // looping. Otherwise we will key the array using the value of the key we
+            // received from the developer. Then we'll return the final array form.
+            if (is_null($key)) {
+                $results[] = $itemValue;
+            }
+            else {
+                $itemKey = data_get($item, $key);
+
+                $results[$itemKey] = $itemValue;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Push an item onto the beginning of an array.
+     *
+     * @param  array $array
+     * @param  mixed $value
+     * @param  mixed $key
+     *
+     * @return array
+     */
+    public static function array_prepend($array, $value, $key = NULL)
+    {
+        if (is_null($key)) {
+            array_unshift($array, $value);
+        }
+        else {
+            /** @noinspection AdditionOperationOnArraysInspection */
+            $array = [$key => $value] + $array;
+        }
+
+        return $array;
     }
 
     /**
@@ -986,6 +1102,23 @@ trait Arrays
         }
 
         return $data_value;
+    }
+
+    /**
+     * Explode the "value" and "key" arguments passed to "pluck".
+     *
+     * @param  string|array      $value
+     * @param  string|array|null $key
+     *
+     * @return array
+     */
+    protected static function explodePluckParameters($value, $key)
+    {
+        $value = is_string($value) ? explode('.', $value) : $value;
+
+        $key = is_null($key) || is_array($key) ? $key : explode('.', $key);
+
+        return [$value, $key];
     }
 
 }

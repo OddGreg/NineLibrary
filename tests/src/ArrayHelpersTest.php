@@ -1,9 +1,9 @@
 <?php namespace Nine\Library;
 
-    /**
-     * @package Nine
-     * @author  Greg Truesdell <odd.greg@gmail.com>
-     */
+/**
+ * @package Nine
+ * @author  Greg Truesdell <odd.greg@gmail.com>
+ */
 
 use ArrayAccessible;
 use Tests\Ordinary;
@@ -35,143 +35,6 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->lib = new Lib();
-    }
-
-    public function test_extract_column_to_make_compare()
-    {
-        ### array_extract_list($find_key, $array)
-
-        $records = [
-            'George' => ['age' => 26, 'gender' => 'Male'],
-            'Lois'   => ['age' => 32, 'gender' => 'Female'],
-        ];
-        static::assertEquals([26, 32], $this->lib->extract_column($records, 'age'));
-
-        ### (simple) array_make_compare_list(array $array)
-
-        $worker = $this->lib->assoc_from_string('name:Laura, access:Administrator');
-        static::assertEquals(
-            [
-                'name=`Laura`',
-                'access=`Administrator`',
-            ],
-            $this->lib->make_compare($worker)
-        );
-        # empty returns null
-        static::assertNull($this->lib->make_compare([]));
-        # list returns null on invalid array (must be associative)
-        static::assertNull($this->lib->make_compare(['bad']));
-    }
-
-    public function test_assoc_from_string()
-    {
-        ### array_fill_object($obj, $array)
-
-        $obj = $this->lib->cast_array_to_object($this->lib->assoc_from_string('name:Greg, location:Vancouver, cat:Julius'));
-        static::assertEquals(
-            [
-                'name'     => 'Greg',
-                'location' => 'Vancouver',
-                'cat'      => 'Julius',
-            ],
-            $this->lib->cast_object_as_array($obj)
-        );
-        $obj = $this->lib->fill_object($obj, $this->lib->assoc_from_string('need:Coffee'));
-        static::assertEquals(
-            [
-                'name'     => 'Greg',
-                'location' => 'Vancouver',
-                'cat'      => 'Julius',
-                'need'     => 'Coffee',
-            ],
-            $this->lib->cast_object_as_array($obj));
-
-    }
-
-    public function test_values()
-    {
-        ### generate_object_value_hash($object, $value)
-
-        $obj = new \stdClass();
-
-        static::assertEquals(
-            [
-                'stdClass' => $this->lib->assoc_from_string('one:1, two:2, three:3, four:4'),
-            ],
-            $this->lib->value_class($obj, $this->lib->assoc_from_string('one:1, two:2, three:3, four:4'))
-        );
-        # non-object returns null
-        /** @noinspection PhpParamsInspection */
-        static::assertNull($this->lib->value_class('not an object', $this->lib->assoc_from_string('one:1, two:2, three:3, four:4')));
-
-        ### pivot_array_on_index(array $input)
-
-        $worker = [
-            [
-                'name' => 'Google',
-                'url'  => 'https://google.com',
-            ],
-            [
-                'name' => 'Yahoo!',
-                'url'  => 'http://yahoo.com',
-            ],
-        ];
-        static::assertEquals(
-            [
-                'name' =>
-                    [
-                        'Google',
-                        'Yahoo!',
-                    ],
-                'url'  =>
-                    [
-                        'https://google.com',
-                        'http://yahoo.com',
-                    ],
-            ],
-            $this->lib->pivot_array($worker)
-        );
-
-        ###  multi_explode(array $delimiters, $string, $trim)
-
-        static::assertEquals(
-            [
-                0 => 'This is a string',
-                1 => ' Break it up',
-                2 => ' Ok?',
-            ],
-            $this->lib->multi_explode('This is a string. Break it up! Ok?', ['.', '!'])
-        );
-
-        ### convert_list_to_indexed_array($array)
-
-        static::assertEquals(
-            [
-                0 => 'one',
-                1 => 'two',
-            ],
-            $this->lib->array_to_numeric_index($this->lib->array_from_string('one two'))
-        );
-
-    }
-
-    public function test_array_get_and_search()
-    {
-        $searchRA = [
-            'name'   => 'greg',
-            'record' => [
-                'age'    => 100,
-                'amount' => 26.58,
-                'source' => 'pension',
-            ],
-        ];
-
-        static::assertEquals('not found', $this->lib->array_get($searchRA, 'record.lazy', 'not found'));
-        static::assertEquals($searchRA['record'], $this->lib->array_search_and_replace($searchRA, 'record.lazy', 'not found'));
-        static::assertEquals(26.58, $this->lib->array_get($searchRA, 'record.amount', 'not found'));
-        //static::assertEquals('not found', $this->lib->search('not.there', $searchRA, 'not found'));
-
-        //ddump([$resultSearch, $resultGet]);
     }
 
     public function test_array_accessible_to_array_has()
@@ -428,10 +291,10 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
 
         static::assertEquals(
             [
-                'Apples'      => 'One',
-                'Beets'       => 2,
-                'Candy.start' => 'now',
-                'Candy.end'   => 'then',
+                0 => 'One',
+                1 => 2,
+                2 => 'now',
+                3 => 'then',
             ],
             $this->lib->array_flatten($this->source_array)
         );
@@ -484,6 +347,25 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
             $this->lib->assoc_from_string('apples:10, beets:nope, candy.start:now, candy.end:never')
         );
 
+    }
+
+    public function test_array_get_and_search()
+    {
+        $searchRA = [
+            'name'   => 'greg',
+            'record' => [
+                'age'    => 100,
+                'amount' => 26.58,
+                'source' => 'pension',
+            ],
+        ];
+
+        static::assertEquals('not found', $this->lib->array_get($searchRA, 'record.lazy', 'not found'));
+        static::assertEquals($searchRA['record'], $this->lib->array_search_and_replace($searchRA, 'record.lazy', 'not found'));
+        static::assertEquals(26.58, $this->lib->array_get($searchRA, 'record.amount', 'not found'));
+        //static::assertEquals('not found', $this->lib->search('not.there', $searchRA, 'not found'));
+
+        //ddump([$resultSearch, $resultGet]);
     }
 
     public function test_array_index_to_array_last()
@@ -754,6 +636,31 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
         static::assertArrayNotHasKey('count', $actual);
     }
 
+    public function test_assoc_from_string()
+    {
+        ### array_fill_object($obj, $array)
+
+        $obj = $this->lib->cast_array_to_object($this->lib->assoc_from_string('name:Greg, location:Vancouver, cat:Julius'));
+        static::assertEquals(
+            [
+                'name'     => 'Greg',
+                'location' => 'Vancouver',
+                'cat'      => 'Julius',
+            ],
+            $this->lib->cast_object_as_array($obj)
+        );
+        $obj = $this->lib->fill_object($obj, $this->lib->assoc_from_string('need:Coffee'));
+        static::assertEquals(
+            [
+                'name'     => 'Greg',
+                'location' => 'Vancouver',
+                'cat'      => 'Julius',
+                'need'     => 'Coffee',
+            ],
+            $this->lib->cast_object_as_array($obj));
+
+    }
+
     public function test_collapse()
     {
         $array = [
@@ -809,6 +716,32 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
         $this->lib->from_notation('this.thing', $array, 'exists');
         static::assertEquals(['this' => ['thing' => 'exists']], $array);
 
+    }
+
+    public function test_extract_column_to_make_compare()
+    {
+        ### array_extract_list($find_key, $array)
+
+        $records = [
+            'George' => ['age' => 26, 'gender' => 'Male'],
+            'Lois'   => ['age' => 32, 'gender' => 'Female'],
+        ];
+        static::assertEquals([26, 32], $this->lib->extract_column($records, 'age'));
+
+        ### (simple) array_make_compare_list(array $array)
+
+        $worker = $this->lib->assoc_from_string('name:Laura, access:Administrator');
+        static::assertEquals(
+            [
+                'name=`Laura`',
+                'access=`Administrator`',
+            ],
+            $this->lib->make_compare($worker)
+        );
+        # empty returns null
+        static::assertNull($this->lib->make_compare([]));
+        # list returns null on invalid array (must be associative)
+        static::assertNull($this->lib->make_compare(['bad']));
     }
 
     public function test_flatten()
@@ -888,6 +821,73 @@ class ArrayHelpersTest extends \PHPUnit_Framework_TestCase
             ],
             $obj_array
         );
+    }
+
+    public function test_values()
+    {
+        ### generate_object_value_hash($object, $value)
+
+        $obj = new \stdClass();
+
+        static::assertEquals(
+            [
+                'stdClass' => $this->lib->assoc_from_string('one:1, two:2, three:3, four:4'),
+            ],
+            $this->lib->value_class($obj, $this->lib->assoc_from_string('one:1, two:2, three:3, four:4'))
+        );
+        # non-object returns null
+        /** @noinspection PhpParamsInspection */
+        static::assertNull($this->lib->value_class('not an object', $this->lib->assoc_from_string('one:1, two:2, three:3, four:4')));
+
+        ### pivot_array_on_index(array $input)
+
+        $worker = [
+            [
+                'name' => 'Google',
+                'url'  => 'https://google.com',
+            ],
+            [
+                'name' => 'Yahoo!',
+                'url'  => 'http://yahoo.com',
+            ],
+        ];
+        static::assertEquals(
+            [
+                'name' =>
+                    [
+                        'Google',
+                        'Yahoo!',
+                    ],
+                'url'  =>
+                    [
+                        'https://google.com',
+                        'http://yahoo.com',
+                    ],
+            ],
+            $this->lib->pivot_array($worker)
+        );
+
+        ###  multi_explode(array $delimiters, $string, $trim)
+
+        static::assertEquals(
+            [
+                0 => 'This is a string',
+                1 => ' Break it up',
+                2 => ' Ok?',
+            ],
+            $this->lib->multi_explode('This is a string. Break it up! Ok?', ['.', '!'])
+        );
+
+        ### convert_list_to_indexed_array($array)
+
+        static::assertEquals(
+            [
+                0 => 'one',
+                1 => 'two',
+            ],
+            $this->lib->array_to_numeric_index($this->lib->array_from_string('one two'))
+        );
+
     }
 
 }
