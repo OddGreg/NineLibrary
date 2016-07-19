@@ -7,7 +7,7 @@
  */
 
 use ArrayAccess;
-use Guzzle\Common\Collection;
+use Nine\Collections\Collection;
 
 /**
  * **Arrays is a compendium of array functions, supplied as static methods,
