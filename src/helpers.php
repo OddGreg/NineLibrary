@@ -8,7 +8,6 @@
  * @author  Greg Truesdell <odd.greg@gmail.com>
  */
 
-use Guzzle\Common\Collection;
 use Nine\Library\Lib;
 
 if (PHP_VERSION_ID < 70000) {
@@ -225,7 +224,7 @@ if ( ! function_exists('data_get')) {
 
         while (($segment = array_shift($key)) !== NULL) {
             if ($segment === '*') {
-                if ($target instanceof Collection) {
+                if (is_object($target) && method_exists($target, 'all')) {
                     $target = $target->all();
                 }
                 elseif ( ! is_array($target)) {
