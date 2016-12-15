@@ -6,3 +6,5 @@
 /local/
 /samiconfig.php
 /makedocs
+.DS_Store
+.idea/

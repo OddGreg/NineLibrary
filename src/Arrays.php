@@ -631,6 +631,8 @@ trait Arrays
             return $arrayOrObject->$key ?? NULL;
         }
 
+        $arrayOrObject = is_array($arrayOrObject) ? $arrayOrObject : [];
+
         return array_key_exists($key, $arrayOrObject) ? $arrayOrObject[$key] : $default;
     }
 
